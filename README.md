@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+name: AI Scribe – Frontend (Next.js)
+description: >
+  This is the frontend for the AI Scribe for Home Health OASIS Assessments project.
+  It allows users to upload assessment audio files, view transcripts, summaries, and auto-filled OASIS data.
 
-## Getting Started
+setup_instructions:
+  - step: Install dependencies
+    command: npm install
 
-First, run the development server:
+  - step: Set up environment variables
+    file: .env.local
+    example:
+      NEXT_PUBLIC_API_URL: "http://localhost:5000"
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+  - step: Start the development server
+    command: npm run dev
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+assumptions_or_shortcuts:
+  - Oasis audio file can only be inserted inside patient page.
+  - OASIS field extraction logic is based on fixed model output.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+pages_and_features:
+  - path: /
+    description: Homepage and file uploader
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+  - path: /patient/[id]
+    description: View patient information, transcript, summary, and mapped OASIS fields
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+tech_stack:
+  - Next.js
+  - TypeScript
+  - Tailwind CSS
+  - React Hooks
+  - React Icons
