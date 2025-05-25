@@ -1,40 +1,29 @@
-"use client";
-
-import { PatientFields } from "@/app/utils/consts";
-import { useEffect, useState, useTransition } from "react";
 import { parseIsoToDate } from "@/app/utils/parsers/date";
-import { useParams, useRouter } from "next/navigation";
 import { FaArrowLeft } from "@/app/libs/react-icons";
 import { getPatient } from "@/app/hooks/getPatient";
+import { PatientFields } from "@/app/utils/consts";
+import { Oasis } from "@/app/components/oasis";
 import { Patient } from "@/app/types";
-import Oasis from "@/app/components/oasis";
+import Link from "next/link";
 
-export default function PatientPage() {
-  const params = useParams();
-  const [isPending, startTransition] = useTransition();
-  const [patient, setPatient] = useState<Patient>();
-  const router = useRouter();
-
-  useEffect(() => {
-    startTransition(() => {
-      getPatient(params.id as string).then(setPatient);
-    });
-  }, [params.id]);
+export default async function PatientPage({ params }: { params: Promise<{ id: string; }>} ) {
+  const { id } = await params;
+  const patient = await getPatient(id);
 
   return (
     <main className="flex flex-col lg:flex-row min-h-screen w-full bg-white text-black">
-      <div className="flex flex-col lg:w-1/3">
+      <div className="flex flex-col w-fit">
         <div className="flex gap-5 items-center border-b h-12 py-1 px-3">
-          <button
-            onClick={() => router.back()}
+          <Link
+            href="/"
             className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-200 transition-all"
           >
-            <FaArrowLeft />  Back
-          </button>
+            <FaArrowLeft /> Back
+          </Link>
         </div>
         <div className="flex flex-col items-center gap-3 p-5">
           <h1 className="text-lg font-bold">Patient Chart</h1>
-          {isPending || !patient ? (
+          {!patient ? (
             <div className="py-10 text-gray-500">Loading patient data...</div>
           ) : (
             <ul>
@@ -53,7 +42,11 @@ export default function PatientPage() {
           )}
         </div>
       </div>
-      <Oasis isPending={isPending} patient={patient} />
+      <Oasis
+        patientId={id}
+        isPending={false}
+        notes={patient?.note}
+      />
     </main>
   )
 }

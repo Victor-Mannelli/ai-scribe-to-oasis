@@ -1,26 +1,57 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Patient } from "@/app/types";
-import { OASISFields } from "@/app/utils/consts";
+"use client";
 
-export default function Oasis({ isPending, patient }: { isPending: boolean, patient: Patient | undefined }) {
-  console.log(patient);
+import { UploadFileForm } from "./uploadFileForm";
+import { OASISFields } from "@/app/utils/consts";
+import { PatientNote } from "@/app/types";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+export function Oasis({ isPending, notes, patientId }: {
+  notes: PatientNote[] | undefined;
+  isPending: boolean;
+  patientId: string;
+}) {
+  const [selectedNoteIdx, setSelectedNoteIndex] = useState<number>(0);
+  const router = useRouter();
+
   return (
-    <div className="flex flex-col lg:w-2/3 lg:border-l border-t">
+    <div className="flex flex-col w-full lg:border-l border-t">
       <div className="flex gap-5 items-center h-12 px-3">
         <button className="font-extrabold"> OASIS </button>
       </div>
-      {isPending ? (
+      {isPending || !notes ? (
         <div className="p-5 text-gray-500">Loading notes...</div>
-      ) : patient?.note && patient.note.length > 0 ? (
-        <div className="p-5 flex flex-col gap-6">
-          <div>
-            <h2 className="font-semibold mb-2">Interaction Transcription</h2>
-            <p className="bg-gray-50 p-3 rounded">{patient.note[0].interactionTranscription}</p>
-          </div>
-          <div>
-            <h2 className="font-semibold mb-2">Interaction Summary</h2>
-            <p className="bg-gray-50 p-3 rounded">{patient.note[0].interactionSummary}</p>
-          </div>
+      ) : notes.length == 0 ? (
+        <UploadFileForm patientId={patientId} router={router} />
+      ) : (
+        <div className="p-5 flex flex-col gap-2">
+          <label className="block font-semibold" htmlFor="note-select">
+            Select Note
+          </label>
+          <select
+            id="note-select"
+            className="bg-gray-50 p-2 rounded w-full cursor-pointer hover:brightness-95 transition-all"
+          >
+            {notes?.map((note, idx) => (
+              <option
+                key={note.createdAt || idx}
+                onSelect={() => setSelectedNoteIndex(idx)}
+                value={idx}
+              >
+                {note.createdAt ? new Date(note.createdAt).toLocaleString() : `Note ${idx + 1}`}
+              </option>
+            ))}
+          </select>
+          <h2 className="font-semibold">Interaction Transcription</h2>
+          <p className="bg-gray-50 p-3 rounded w-full">
+            {notes[selectedNoteIdx].interactionTranscription}
+          </p>
+          <h2 className="font-semibold">Interaction Summary</h2>
+          <p
+            className="bg-gray-50 p-3 rounded w-full"
+          >
+            {notes[selectedNoteIdx].interactionSummary}
+          </p>
           <div>
             <h2 className="font-semibold mb-2">OASIS Table</h2>
             <table className="min-w-full border border-gray-300 rounded">
@@ -32,33 +63,24 @@ export default function Oasis({ isPending, patient }: { isPending: boolean, pati
                 </tr>
               </thead>
               <tbody>
-                {(["M1800", "M1810", "M1820", "M1830", "M1840", "M1850", "M1860"] as (keyof typeof patient.note[0])[]).map((field) => (
-                  <tr key={field} className="[&>td]:px-4 [&>td]:py-2 [&>td]:text-center [&>td]:border">
-                    <td className="font-medium">{field}</td>
-                    <td>{OASISFields[field][patient.note[0][field] as keyof typeof OASISFields[typeof field]]}</td>
-                    <td>{patient.note[0][field]}</td>
-                  </tr>
-                ))}
+                {Object.keys(OASISFields).map((field) => {
+                  const value = notes[selectedNoteIdx][field as keyof PatientNote] ?? "";
+                  const description = OASISFields[field]?.descriptions?.[value] || "";
+                  return (
+                    <tr key={field} className="[&>td]:px-4 [&>td]:py-2 [&>td]:text-center [&>td]:border">
+                      <td className="font-medium">{field}</td>
+                      <td>{description}</td>
+                      <td>{value}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
-        </div>
-      ) : (
-        <div className="p-5 flex flex-col items-center gap-3">
-          <p className="text-gray-500">No notes available.</p>
-          <label className="block">
-            <span className="sr-only">Upload audio file</span>
-            <input
-              type="file"
-              accept="audio/*"
-              className="block w-full text-sm text-gray-500
-                file:mr-4 file:py-2 file:px-4
-                file:rounded-md file:border-0
-                file:text-sm file:font-semibold
-                file:bg-blue-50 file:text-blue-700
-                hover:file:bg-blue-100"
-            />
-          </label>
+          <div className="flex flex-col gap-3 mt-3">
+            <h1 className="font-bold"> Add another note </h1>
+            <UploadFileForm noNotes={false} patientId={patientId} router={router} />
+          </div>
         </div>
       )}
     </div>

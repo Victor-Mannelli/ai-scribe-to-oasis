@@ -1,12 +1,12 @@
 "use client";
 
-import { PatientFields } from "@/app/utils/consts";
+import { handlePatientCreation } from "@/app/hooks/createPatient";
 import { useRef, useState, useTransition } from "react";
-import { handlePatientCreation } from './handleSubmit';
+import { PatientFields } from "@/app/utils/consts";
 import { useOnClickOutside } from 'usehooks-ts';
 import { useRouter } from 'next/navigation';
 
-export function AddPatient() {
+export function AddPatientModel() {
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const router = useRouter();
@@ -31,7 +31,7 @@ export function AddPatient() {
       </button>
       {isOpen && (
         <div className="fixed inset-0 w-full h-full bg-black/50 flex justify-center items-center">
-          <div ref={modalRef} className="flex flex-col gap-3 bg-white p-5 rounded-md shadow-lg">
+          <div ref={modalRef} className="flex flex-col w-[90%] md:w-fit h-[90%] md:h-fit gap-3 bg-white p-5 rounded-md shadow-lg  overflow-auto">
             <h2 className="text-xl font-bold">Add New Patient</h2>
             <form onSubmit={onSubmit} className="grid grid-cols-1 lg:grid-cols-2 lg:gap-4 gap-2">
               {PatientFields.map((field) => (
@@ -49,7 +49,10 @@ export function AddPatient() {
                   />
                 </div>
               ))}
-              <div className="lg:col-span-2 flex justify-end">
+              <div className="lg:col-span-2 flex justify-between md:justify-end items-center gap-3">
+                <button onClick={() => setIsOpen(false)} className="bg-black text-white py-2 px-4 mt-2 rounded-md hover:scale-105 transition-all">
+                  Close
+                </button>
                 <button type="submit" className="bg-black text-white py-2 px-4 mt-2 rounded-md hover:scale-105 transition-all">
                   {isPending ? "Submitting..." : "Submit"}
                 </button>

@@ -1,4 +1,4 @@
-export async function handlePatientCreation(event: React.FormEvent<HTMLFormElement>) {
+export function handlePatientCreation(event: React.FormEvent<HTMLFormElement>): Promise<Response> {
   event.preventDefault();
 
   const formData = new FormData(event.currentTarget);
@@ -17,13 +17,13 @@ export async function handlePatientCreation(event: React.FormEvent<HTMLFormEleme
     physician: formData.get("physician") as string,
     status: formData.get("status") as string,
     primaryInsurance: formData.get("primaryInsurance") as string,
-  }
+  };
 
-  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/patients`, {
+  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/patients`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(patientData),
-  })
+  });
 }

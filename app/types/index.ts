@@ -26,4 +26,15 @@ export type PatientNote = {
   M1850: number;
   M1860: number;
   patientId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type OasisFields = {
+  [key: string]: {
+    levels: number;
+    descriptions: {
+      [key: string]: string;
+    }
+  };
 }

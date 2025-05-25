@@ -1,4 +1,4 @@
-import { AddPatient } from "./components/addPatient";
+import { AddPatientModel } from "./components/addPatientModel";
 import { getPatients } from "./hooks/getPatients";
 import { isoDobToAge } from "./utils/parsers/age";
 import { Patient } from "./types";
@@ -32,7 +32,7 @@ export default async function Home() {
             </li>
           ))}
         </ul>
-        <AddPatient />
+        <AddPatientModel />
       </main>
     </div>
   );
